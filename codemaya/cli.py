@@ -29,6 +29,7 @@ COMMANDS: dict[str, tuple[str, str]] = {
     "train-contrastive": ("codemaya.training.contrastive_align", "run"),
     "render":            ("codemaya.rendering.render", "run"),
     "infer":             ("codemaya.inference.generate", "run"),
+    "predict":           ("codemaya.inference.predict", "run"),
     "eval-syntax":       ("codemaya.evaluation.syntax_validity", "run"),
     "eval-semantic":     ("codemaya.evaluation.semantic_visual", "run"),
     "eval-geometry":     ("codemaya.evaluation.geometry", "run"),

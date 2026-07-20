@@ -35,8 +35,10 @@ python -m codemaya.cli build-dataset              # 2. Gemini backward prompt-ge
 python -m codemaya.cli analyze-dataset            # 2b. dataset stats (paper Fig.3 / Tables 2-3)
 python -m codemaya.cli train-sft                  # 3. stage-1 LoRA SFT
 python -m codemaya.cli train-contrastive          # 4. stage-2 CLIP contrastive alignment
-python -m codemaya.cli infer --prompt "..."       # 5. generate MEL
-python -m codemaya.cli render                      # 6. render MEL -> obj + image
+python -m codemaya.cli infer --prompt "..."       # 5. generate MEL for one prompt
+python -m codemaya.cli render                      # 6. render a MEL -> obj + image
+python -m codemaya.cli predict                     # 6b. batch generate+render test set
+                                                   #     -> results/generations.jsonl
 python -m codemaya.cli eval-syntax                 # 7a. syntax validity (Table 1)
 python -m codemaya.cli eval-semantic               # 7b. CLIP + DINOv2 similarity
 python -m codemaya.cli eval-geometry               # 7c. Chamfer/Hausdorff/volume/area
