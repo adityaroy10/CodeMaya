@@ -53,13 +53,15 @@ def build_parser() -> argparse.ArgumentParser:
                    metavar="k.v=x", help="override a config key (repeatable)")
     p.add_argument("--smoke", action="store_true",
                    help="smoke mode: assemble/verify without heavy execution")
-    p.add_argument("rest", nargs=argparse.REMAINDER,
-                   help="extra stage-specific args (see the stage module)")
     return p
 
 
 def main(argv: list[str] | None = None) -> int:
-    args = build_parser().parse_args(argv)
+    # parse_known_args (not a REMAINDER positional) so global optionals like
+    # --smoke / --set are always recognized; anything left over is stage-specific
+    # (e.g. `infer --prompt "..."`) and handed to the stage on args.rest.
+    args, extra = build_parser().parse_known_args(argv)
+    args.rest = extra
     cfg = load_config(args.config, args.overrides)
     log.info("command=%s smoke=%s", args.command, args.smoke)
     fn = _resolve(args.command)
