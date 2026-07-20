@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+
+# Caches / logs
+.cache/
+*.log
+.DS_Store
+
+# Data & artifacts (regenerate via the pipeline)
+data/raw/
+data/cache/
+data/processed/
+data/dataset/
+outputs/
+checkpoints/
+runs/
+wandb/
+
+# Rendered assets / meshes
+*.obj
+*.mtl
+*.png
+*.jpg
+*.jpeg
+!docs/**/*.png
+!assets/**/*.png
+!tests/fixtures/**
+
+# Model weights / adapters
+*.safetensors
+*.bin
+adapters/
+models/
+
+# Secrets
+.env
+*.key
+credentials.json
+
+# Working logs & mission state (local only, per GitHub-folder CLAUDE.md protocol)
+MISSION.md
+GOALLOOP.md
+JOURNAL.md
+LESSONS.md
+SCRATCHPAD.md

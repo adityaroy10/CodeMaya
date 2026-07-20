@@ -1,0 +1,76 @@
+# Central configuration for the CodeMaya pipeline.
+# Every stage reads this file; override any key on the CLI with --set key.sub=value.
+
+seed: 42
+
+paths:
+  raw_docs:       data/raw/maya_docs          # scraped Autodesk Maya documentation
+  cache:          data/cache                  # scraper + gemini response cache
+  dataset:        data/dataset                # final JSONL train/val/test splits
+  renders:        outputs/renders             # rendered images + exported .obj
+  checkpoints:    checkpoints                 # LoRA adapters, ViT/siamese heads
+  results:        outputs/results             # metrics tables + figure data
+  logs:           outputs/logs
+
+# ---------------------------------------------------------------- scraping ----
+scrape:
+  # Autodesk Maya Technical Docs — MEL command reference. Version is configurable.
+  # Respect Autodesk's terms of use and robots.txt when scraping.
+  base_url: "https://help.autodesk.com/cloudhelp/2024/ENU/Maya-Tech-Docs/Commands"
+  index_page: "index_all.html"
+  request_delay_sec: 1.0        # politeness delay between requests
+  max_commands: null            # null = all; set an int to cap for a quick run
+  user_agent: "CodeMaya-research-scraper/1.0 (+educational use)"
+
+# ------------------------------------------------------- dataset construction -
+dataset:
+  gemini_model: "gemini-2.0-flash"
+  prompts_per_response: 1       # backward-generated NL prompts per scraped response
+  max_prompt_tokens: 256        # drop pathological long prompts (paper: peak < 25 tok)
+  splits: {train: 0.9, val: 0.05, test: 0.05}
+  types: [mel, python, info]    # response type tags
+
+# ------------------------------------------------------------------ training --
+model:
+  base: "codellama/CodeLlama-7b-Instruct-hf"
+  max_seq_len: 1024
+
+lora:
+  r: 16
+  alpha: 32
+  dropout: 0.05
+  target_modules: [q_proj, k_proj, v_proj, o_proj]
+
+sft:
+  epochs: 3
+  lr: 2.0e-4
+  batch_size: 4
+  grad_accum: 8
+  warmup_ratio: 0.03
+  load_in_4bit: true            # QLoRA; auto-disabled if bitsandbytes unavailable
+  bf16: true
+
+# stage 2 — CLIP contrastive alignment loop
+contrastive:
+  clip_model: "openai/clip-vit-base-patch32"
+  temperature: 0.07
+  lr: 5.0e-5
+  steps: 500
+  batch_size: 8
+  render_timeout_sec: 120
+
+# ---------------------------------------------------------------- rendering ---
+render:
+  backend: "fallback"           # "maya" (mayapy) or "fallback" (trimesh primitives)
+  mayapy: "mayapy"              # path to Maya's python interpreter
+  image_size: 512
+  viewpoints: 5                 # renders per object (paper eval uses 5)
+
+# --------------------------------------------------------------- evaluation ---
+eval:
+  clip_model: "openai/clip-vit-base-patch32"
+  dino_model: "facebook/dinov2-base"
+  vit_model: "google/vit-base-patch16-224-in21k"
+  chamfer_sample_points: 4096
+  baselines: [base, gemini]     # compare fine-tuned model against these
+  test_prompts: 100             # paper evaluates on 100 held-out prompts

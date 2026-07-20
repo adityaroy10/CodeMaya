@@ -1,0 +1,40 @@
+# Core ML / LLM
+torch>=2.2
+transformers>=4.44
+peft>=0.12
+trl>=0.9
+accelerate>=0.33
+datasets>=2.20
+bitsandbytes>=0.43 ; platform_system != "Darwin"   # 4-bit QLoRA (CUDA only)
+sentencepiece>=0.2
+safetensors>=0.4
+
+# Data construction
+google-generativeai>=0.7        # gemini-2.0-flash for backward prompt generation
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=5.2
+tenacity>=8.5                   # retry/backoff for scraping + API calls
+
+# Vision / evaluation encoders (CLIP + DINOv2 + ViT load via transformers)
+pillow>=10.3
+
+# Geometry / meshes
+trimesh>=4.4
+scipy>=1.13
+numpy>=1.26
+
+# Config / analysis / plotting / notebook
+matplotlib>=3.9
+pandas>=2.2
+pyyaml>=6.0
+tqdm>=4.66
+jupyter>=1.0
+
+# Testing
+pytest>=8.0
+
+# --- Optional extras -------------------------------------------------------
+# CPU-only fallback renderer (no Maya). pyrender needs a GL backend; on headless
+# machines export PYOPENGL_PLATFORM=egl (or osmesa). Install manually if needed:
+#   pip install pyrender>=0.1.45
