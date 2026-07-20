@@ -68,8 +68,21 @@ tests/                 # pytest suite (pure-python logic)
 scripts/               # thin shell wrappers for each stage
 ```
 
+## Testing
+```bash
+pytest -q                       # pure-logic unit tests (no GPU/Maya/API needed)
+bash scripts/smoke.sh           # offline end-to-end pipeline on tiny/mock components
+```
+`--smoke` on any stage assembles and exercises the code path with a tiny random
+model / mock encoders / fallback renderer — no big downloads, no training.
+
 ## Status
-Under active implementation (`codemaya-implementation` branch). Training is **not** run here — this repo ships the code; runs are yours to launch.
+Full pipeline implemented and wired (`codemaya-implementation` branch): scraping,
+dataset construction, stage-1 SFT, stage-2 contrastive alignment, rendering,
+inference, the complete evaluation stack, aggregation, and the results notebook.
+Every stage is smoke-verified and the pure-logic cores are unit-tested. **Real
+training is intentionally not run here** — this repo ships the code; launch the
+runs yourself with `scripts/run_all.sh` (needs GPU + Gemini key; Maya optional).
 
 ## License
 See `LICENSE`.
